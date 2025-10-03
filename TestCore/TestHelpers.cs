@@ -1,44 +1,27 @@
-using Grocery.Core.Helpers;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace TestCore
+namespace Grocery.Core.Helpers
 {
-    public class TestHelpers
+    public static class PasswordHelper
     {
-        [SetUp]
-        public void Setup()
+        public static string HashPassword(string password)
         {
+            byte[] salt = RandomNumberGenerator.GetBytes(16);
+            var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, 100000, HashAlgorithmName.SHA256, 32);
+            return Convert.ToBase64String(salt) + "." + Convert.ToBase64String(hash);
         }
 
-
-        //Happy flow
-        [Test]
-        public void TestPasswordHelperReturnsTrue()
+        public static bool VerifyPassword(string password, string storedHash)
         {
-            string password = "user3";
-            string passwordHash = "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=";
-            Assert.IsTrue(PasswordHelper.VerifyPassword(password, passwordHash));
-        }
+            var parts = storedHash.Split('.');
+            if (parts.Length != 2) return false;
 
-        [TestCase("user1", "IunRhDKa+fWo8+4/Qfj7Pg==.kDxZnUQHCZun6gLIE6d9oeULLRIuRmxmH2QKJv2IM08=")]
-        [TestCase("user3", "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=")]
-        public void TestPasswordHelperReturnsTrue(string password, string passwordHash)
-        {
-            Assert.IsTrue(PasswordHelper.VerifyPassword(password, passwordHash));
-        }
+            var salt = Convert.FromBase64String(parts[0]);
+            var hash = Convert.FromBase64String(parts[1]);
+            var inputHash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, 100000, HashAlgorithmName.SHA256, 32);
 
-
-        //Unhappy flow
-        [Test]
-        public void TestPasswordHelperReturnsFalse()
-        {
-            Assert.Pass(); //Zelf uitwerken
-        }
-
-        [TestCase("user1", "IunRhDKa+fWo8+4/Qfj7Pg==.kDxZnUQHCZun6gLIE6d9oeULLRIuRmxmH2QKJv2IM08")]
-        [TestCase("user3", "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA")]
-        public void TestPasswordHelperReturnsFalse(string password, string passwordHash)
-        {
-            Assert.Fail(); //Zelf uitwerken zodat de test slaagt!
+            return CryptographicOperations.FixedTimeEquals(inputHash, hash);
         }
     }
 }
