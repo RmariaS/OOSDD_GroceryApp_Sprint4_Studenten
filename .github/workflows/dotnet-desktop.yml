@@ -64,10 +64,10 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore TestCore/TestCore.csproj
 
-    - name: Build
-      run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
+    - name: Build TestCore
+      run: dotnet build TestCore/TestCore.csproj --configuration ${{ matrix.configuration }} --no-restore
 
     - name: Execute unit tests
-      run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+      run: dotnet test TestCore/TestCore.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal
