@@ -1,5 +1,4 @@
 using Grocery.Core.Helpers;
-
 namespace TestCore
 {
     public class TestHelpers
@@ -8,8 +7,6 @@ namespace TestCore
         public void Setup()
         {
         }
-
-
         //Happy flow
         [Test]
         public void TestPasswordHelperReturnsTrue()
@@ -18,27 +15,27 @@ namespace TestCore
             string passwordHash = "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=";
             Assert.IsTrue(PasswordHelper.VerifyPassword(password, passwordHash));
         }
-
         [TestCase("user1", "IunRhDKa+fWo8+4/Qfj7Pg==.kDxZnUQHCZun6gLIE6d9oeULLRIuRmxmH2QKJv2IM08=")]
         [TestCase("user3", "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=")]
         public void TestPasswordHelperReturnsTrue(string password, string passwordHash)
         {
             Assert.IsTrue(PasswordHelper.VerifyPassword(password, passwordHash));
         }
-
-
         //Unhappy flow
         [Test]
         public void TestPasswordHelperReturnsFalse()
         {
-            Assert.Pass(); //Zelf uitwerken
+            // Test met verkeerd wachtwoord
+            string password = "wrongpassword";
+            string passwordHash = "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA=";
+            Assert.IsFalse(PasswordHelper.VerifyPassword(password, passwordHash));
         }
-
         [TestCase("user1", "IunRhDKa+fWo8+4/Qfj7Pg==.kDxZnUQHCZun6gLIE6d9oeULLRIuRmxmH2QKJv2IM08")]
         [TestCase("user3", "sxnIcZdYt8wC8MYWcQVQjQ==.FKd5Z/jwxPv3a63lX+uvQ0+P7EuNYZybvkmdhbnkIHA")]
         public void TestPasswordHelperReturnsFalse(string password, string passwordHash)
         {
-            Assert.Fail(); //Zelf uitwerken zodat de test slaagt!
+            // De hash miste de laatste '=' karakter, dus was corrupt!!!!
+            Assert.IsFalse(PasswordHelper.VerifyPassword(password, passwordHash));
         }
     }
 }
