@@ -13,19 +13,18 @@ public partial class BestSellingProductsView : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is BestSellingProductsViewModel bindingContext)
+        if (BindingContext is BestSellingProductsViewModel vm)
         {
-            bindingContext.OnAppearing();
-
+            vm.OnAppearing();
         }
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        if (BindingContext is BestSellingProductsViewModel bindingContext)
+        if (BindingContext is BestSellingProductsViewModel vm)
         {
-            bindingContext.OnDisappearing();
+            vm.OnDisappearing();
         }
     }
 }
